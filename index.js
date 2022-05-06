@@ -6,41 +6,45 @@ const { OAuth2 } = google.auth
 
 // Create a new instance of oAuth and set our Client ID & Client Secret.
 const oAuth2Client = new OAuth2(
-  'YOUR CLIENT ID GOES HERE',
-  'YOUR CLIENT SECRET GOES HERE'
+  '298212197539-ctuloh353uou9qhb4q0np87d2n9i1083.apps.googleusercontent.com',
+  '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'
 )
 
 // Call the setCredentials method on our oAuth2Client instance and set our refresh token.
 oAuth2Client.setCredentials({
-  refresh_token: 'YOUR REFRESH TOKEN GOES HERE',
+  refresh_token: '1//04ydLtS-SvURyCgYIARAAGAQSNwF-L9IrOZNcSLFkILyVywOwGMf9mfnyEYNQJM2qNnZeLIDqn0LlHgVAsVoarTuA4uPVllAAQLU',
 })
 
 // Create a new calender instance.
 const calendar = google.calendar({ version: 'v3', auth: oAuth2Client })
-
-// Create a new event start date instance for temp uses in our calendar.
-const eventStartTime = new Date()
-eventStartTime.setDate(eventStartTime.getDay() + 2)
-
-// Create a new event end date instance for temp uses in our calendar.
-const eventEndTime = new Date()
-eventEndTime.setDate(eventEndTime.getDay() + 4)
-eventEndTime.setMinutes(eventEndTime.getMinutes() + 45)
+var eventStartTime='2022-05-05T16:30:00+05:30';
+var eventEndTime='2022-05-05T17:00:00+05:30';
 
 // Create a dummy event for temp uses in our calendar
 const event = {
-  summary: `Meeting with David`,
-  location: `3595 California St, San Francisco, CA 94118`,
-  description: `Meet with David to talk about the new client project and how to integrate the calendar for booking.`,
-  colorId: 1,
+  summary: `Academic Consultation-Wiingy`,
+  location: `Online/Gmeet`,
+  description: `Thank you for contacting us and scheduling an academic consultation with one of our advisors. On the call, our advisor will listen to your needs and requirements and will advise you on how Wiingy can best support and enable your child through our enriching curriculum. During the call, please feel free to ask any questions or express any concerns you may have.
+
+  Please join the google meet link at the scheduled time. We look forward to speaking with you soon. 
+  
+  Regards,
+  Team Wiingy`,
+  colorId: 10,
   start: {
     dateTime: eventStartTime,
-    timeZone: 'America/Denver',
+    timeZone: 'America/Los_Angeles'
   },
   end: {
     dateTime: eventEndTime,
-    timeZone: 'America/Denver',
+    timeZone: 'America/Los_Angeles'
   },
+  conferenceData: {
+    createRequest: {requestId: "7qxalsvy0e"}
+  },
+  attendees: [
+    {email: 'keerthana@wiingy.com'}
+  ],
 }
 
 // Check if we a busy and have an event on our calendar for the same time.
@@ -59,12 +63,12 @@ calendar.freebusy.query(
 
     // Create an array of all events on our calendar during that time.
     const eventArr = res.data.calendars.primary.busy
-
-    // Check if event array is empty which means we are not busy
-    if (eventArr.length === 0)
       // If we are not busy create a new calendar event.
       return calendar.events.insert(
-        { calendarId: 'primary', resource: event },
+        { calendarId: 'primary', resource: event,
+        sendNotifications: true,
+        conferenceDataVersion: 1 },
+        
         err => {
           // Check for errors and log them if they exist.
           if (err) return console.error('Error Creating Calender Event:', err)
@@ -72,8 +76,5 @@ calendar.freebusy.query(
           return console.log('Calendar event successfully created.')
         }
       )
-
-    // If event array is not empty log that we are busy.
-    return console.log(`Sorry I'm busy...`)
   }
 )
